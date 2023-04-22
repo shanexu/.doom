@@ -1,0 +1,4 @@
+* How to
+#+begin_src shell
+git clone git@github.com:shanexu/.doom.git ~/.config/doom
+#+end_src
