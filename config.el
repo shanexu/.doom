@@ -136,7 +136,6 @@
   :config
   (setq nov-save-place-file (concat doom-cache-dir "nov-places")))
 
-;; def auto-dark-dark-mode-hook
 (defun load-dark-theme ()
   (consult-theme 'doom-dark+))
 
