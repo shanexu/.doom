@@ -24,12 +24,30 @@
 ;;(setq doom-font (font-spec :family "Fira Code" :size 12 :weight 'semi-light)
 ;;      doom-variable-pitch-font (font-spec :family "Fira Sans" :size 13))
 
-(setq doom-font (font-spec :family "CaskaydiaCove Nerd Font" :size 12.0 :weight 'regular))
+(setq doom-font (font-spec :family "CaskaydiaCove Nerd Font" :size 12.0 :weight 'regular)
+      doom-big-font (font-spec :family "CaskaydiaCove Nerd Font" :size 16.0 :weight 'regular))
 
 (defun my-set-cjk-font (font font-size)
   (dolist (charset '(kana han cjk-misc bopomofo))
     (set-fontset-font (frame-parameter nil 'font) charset
                       (font-spec :family font :size font-size))))
+
+(defun my-set-normal-cjk-font ()
+  (my-set-cjk-font "Hiragino Sans GB" 14.2))
+
+(defun my-set-big-cjk-font ()
+  (my-set-cjk-font "Hiragino Sans GB" 19.0))
+
+(defun my-set-font ()
+  (if (display-graphic-p)
+      (if doom-big-font-mode
+          (my-set-big-cjk-font)
+        (my-set-normal-cjk-font))))
+
+(defun my-set-font-delayed ()
+  (run-at-time "1 sec" nil #'my-set-font))
+
+(add-hook 'doom-big-font-mode-hook 'my-set-font-delayed)
 
 ;; If you or Emacs can't find your font, use 'M-x describe-font' to look them
 ;; up, `M-x eval-region' to execute elisp code, and 'M-x doom/reload-font' to
@@ -124,18 +142,13 @@
   :config
   (setq nov-save-place-file (concat doom-cache-dir "nov-places")))
 
-(defun my-set-font ()
-  (if (display-graphic-p)
-      (run-at-time "1 sec" nil #'my-set-cjk-font "Hiragino Sans GB" 14.2)))
-
-
 (defun load-dark-theme ()
   (consult-theme 'kaolin-dark)
-  (my-set-font))
+  (my-set-font-delayed))
 
 (defun load-light-theme ()
   (consult-theme 'kaolin-light)
-  (my-set-font))
+  (my-set-font-delayed))
 
 (use-package! auto-dark
   :config
