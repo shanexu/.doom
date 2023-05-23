@@ -49,6 +49,8 @@
 
 (add-hook 'doom-big-font-mode-hook 'my-set-font-delayed)
 
+(remove-hook 'after-setting-font-hook #'doom-init-all-the-icons-fonts-h)
+
 ;; If you or Emacs can't find your font, use 'M-x describe-font' to look them
 ;; up, `M-x eval-region' to execute elisp code, and 'M-x doom/reload-font' to
 ;; refresh your font settings. If Emacs still can't find your font, it likely
@@ -59,9 +61,10 @@
 ;; `load-theme' function. This is the default:
 ;; (setq doom-theme 'doom-feather-dark)
 ;; (setq doom-theme 'doom-solarized-dark)
-(setq doom-theme 'kaolin-dark)
+;; (setq doom-theme 'kaolin-dark)
 ;; (setq doom-theme 'doom-xcode)
 ;; (setq doom-theme 'doom-solarized-dark-high-contrast)
+(setq doom-theme 'doom-one)
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
@@ -143,11 +146,11 @@
   (setq nov-save-place-file (concat doom-cache-dir "nov-places")))
 
 (defun load-dark-theme ()
-  (consult-theme 'kaolin-dark)
+  (consult-theme 'doom-one)
   (my-set-font-delayed))
 
 (defun load-light-theme ()
-  (consult-theme 'kaolin-light)
+  (consult-theme 'doom-one-light)
   (my-set-font-delayed))
 
 (use-package! auto-dark
