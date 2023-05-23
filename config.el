@@ -26,14 +26,10 @@
 
 (setq doom-font (font-spec :family "CaskaydiaCove Nerd Font" :size 12.0 :weight 'regular))
 
-(defun set-cjk-font (font font-size)
+(defun my-set-cjk-font (font font-size)
   (dolist (charset '(kana han cjk-misc bopomofo))
     (set-fontset-font (frame-parameter nil 'font) charset
                       (font-spec :family font :size font-size))))
-
-(if (display-graphic-p)
-    (run-at-time "1 sec" nil #'set-cjk-font "Hiragino Sans GB" 14.2))
-
 
 ;; If you or Emacs can't find your font, use 'M-x describe-font' to look them
 ;; up, `M-x eval-region' to execute elisp code, and 'M-x doom/reload-font' to
@@ -45,7 +41,7 @@
 ;; `load-theme' function. This is the default:
 ;; (setq doom-theme 'doom-feather-dark)
 ;; (setq doom-theme 'doom-solarized-dark)
-(setq doom-theme 'doom-dark+)
+(setq doom-theme 'kaolin-dark)
 ;; (setq doom-theme 'doom-xcode)
 ;; (setq doom-theme 'doom-solarized-dark-high-contrast)
 
@@ -113,15 +109,7 @@
     "If inside WSL, change Windows-style paths to WSL-style paths."
     (if (string-prefix-p "/" path)
         path
-      (concat "/home/shane/OneDrive/logseq/" path)))
-
-  ;; (defun org-protocol-find-file (fname)
-  ;;   "Process org-protocol://find-file?path= style URL."
-  ;;   (let ((f (plist-get (org-protocol-parse-parameters fname nil '(:path)) :path)))
-  ;;     (find-file
-  ;;      (concat "/home/shane/OneDrive/logseq/" (org-protocol-find-file-fix-wsl-path f)))
-  ;;     (raise-frame)
-  ;;     (select-frame-set-input-focus (selected-frame))))
+      (concat "~/OneDrive/logseq/" path)))
 
   (defun org-protocol-find-file (fname)
     "Process org-protocol://find-file?path= style URL."
@@ -136,14 +124,43 @@
   :config
   (setq nov-save-place-file (concat doom-cache-dir "nov-places")))
 
+(defun my-set-font ()
+  (if (display-graphic-p)
+      (run-at-time "1 sec" nil #'my-set-cjk-font "Hiragino Sans GB" 14.2)))
+
+
 (defun load-dark-theme ()
-  (consult-theme 'doom-dark+))
+  (consult-theme 'kaolin-dark)
+  (my-set-font))
 
 (defun load-light-theme ()
-  (consult-theme 'doom-solarized-light))
+  (consult-theme 'kaolin-light)
+  (my-set-font))
 
 (use-package! auto-dark
   :config
   (setq auto-dark-dark-mode-hook 'load-dark-theme)
   (setq auto-dark-light-mode-hook 'load-light-theme)
   (auto-dark-mode t))
+
+(after! lsp-haskell
+  (setq lsp-haskell-formatting-provider "ormolu"))
+
+(with-eval-after-load 'ox-latex
+ ;; http://orgmode.org/worg/org-faq.html#using-xelatex-for-pdf-export
+ ;; latexmk runs pdflatex/xelatex (whatever is specified) multiple times
+ ;; automatically to resolve the cross-references.
+ (setq org-latex-pdf-process '("latexmk -xelatex -quiet -shell-escape -f %f"))
+ (add-to-list 'org-latex-classes
+               '("elegantpaper"
+                 "\\documentclass[lang=cn]{elegantpaper}
+                 [NO-DEFAULT-PACKAGES]
+                 [PACKAGES]
+                 [EXTRA]"
+                 ("\\section{%s}" . "\\section*{%s}")
+                 ("\\subsection{%s}" . "\\subsection*{%s}")
+                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                 ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                 ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+  (setq org-latex-listings 'minted)
+  (add-to-list 'org-latex-packages-alist '("" "minted")))

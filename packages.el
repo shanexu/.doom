@@ -53,3 +53,7 @@
 
 (package! auto-dark
   :recipe (:host github :repo "shanexu/auto-dark-emacs"))
+
+(package! standard-themes)
+
+(package! kaolin-themes)
