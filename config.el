@@ -24,8 +24,8 @@
 ;;(setq doom-font (font-spec :family "Fira Code" :size 12 :weight 'semi-light)
 ;;      doom-variable-pitch-font (font-spec :family "Fira Sans" :size 13))
 
-(setq doom-font (font-spec :family "CaskaydiaCove Nerd Font" :size 12.0 :weight 'regular)
-      doom-big-font (font-spec :family "CaskaydiaCove Nerd Font" :size 16.0 :weight 'regular))
+(setq doom-font (font-spec :family "CaskaydiaCove Nerd Font Mono" :size 12.0 :weight 'regular)
+      doom-big-font (font-spec :family "CaskaydiaCove Nerd Font Mono" :size 16.0 :weight 'regular))
 
 (defun my-set-cjk-font (font font-size)
   (dolist (charset '(kana han cjk-misc bopomofo))
@@ -110,8 +110,15 @@
 (use-package! doom-themes
   :config
   (setq doom-dark+-blue-modeline t
-        doom-themes-enable-bold t    ; if nil, bold is universally disabled
-        doom-themes-enable-italic t) ; if nil, italics is universally disabled
+        doom-themes-enable-bold t      ; if nil, bold is universally disabled
+        doom-themes-enable-italic t)   ; if nil, italics is universally disabled
+  ;; Enable flashing mode-line on errors
+  (doom-themes-visual-bell-config)
+  ;; or for treemacs users
+  (setq doom-themes-treemacs-theme "doom-atom") ; use "doom-colors" for less minimal icon theme
+  (doom-themes-treemacs-config)
+  ;; Corrects (and improves) org-mode's native fontification.
+  (doom-themes-org-config)
   )
 
 (after! solaire-mode
@@ -144,6 +151,10 @@
   :mode ("\\.epub\\'" . nov-mode)
   :config
   (setq nov-save-place-file (concat doom-cache-dir "nov-places")))
+
+(use-package! plantuml-mode
+  :mode ("\\.puml\\'" . plantuml-mode)
+  )
 
 (defun load-dark-theme ()
   (consult-theme 'doom-one)
@@ -180,3 +191,11 @@
                  ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
   (setq org-latex-listings 'minted)
   (add-to-list 'org-latex-packages-alist '("" "minted")))
+
+(use-package! protobuf-mode
+  :defer-incrementally t)
+
+(use-package! editorconfig
+  :config
+  (add-to-list 'editorconfig-indentation-alist '(graphql-mode graphql-indent-level))
+  (add-to-list 'editorconfig-indentation-alist '(typescript-tsx-mode typescript-indent-level)))
